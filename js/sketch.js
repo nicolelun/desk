@@ -100,43 +100,40 @@ function setup() {
 	// testPara.mouseOver(testChangeBackground);
 	// testPara.mouseOut(testRevertBackground);
 
-	testObject3 = select("#img-pencil");
-	testObject3.mouseOver(testOver);
-	testObject3.mouseOut(testOut);
-	testObject3.mousePressed(testClick);
-	// testObject3.drag(testDrag);
-	myTest = new TestDeskObject(testObject3, testObject3.elt.x, testObject3.elt.y);
-	console.log(testObject3.elt.x);
-	console.log(testObject3.elt.y);
+	// testObject3 = select("#img-pencil");
+	// testObject3.mouseOver(testOver);
+	// testObject3.mouseOut(testOut);
+	// testObject3.mousePressed(testClick);
+	// // testObject3.drag(testDrag);
+	// myTest = new TestDeskObject(testObject3, testObject3.elt.x, testObject3.elt.y);
+	// console.log(testObject3.elt.x);
+	// console.log(testObject3.elt.y);
 }
 
-function testChangeBackground() {
-	testPara.style('background-color', 'pink');
-	cursor(HAND);
-}
+// function testChangeBackground() {
+// 	testPara.style('background-color', 'pink');
+// 	cursor(HAND);
+// }
 
-function testRevertBackground() {
-	testPara.style('background-color', 'white');
-	cursor(ARROW);
-}
+// function testRevertBackground() {
+// 	testPara.style('background-color', 'white');
+// 	cursor(ARROW);
+// }
 
-function testOver() {
-	console.log("over");
-	cursor(HAND);
-}
 
-function testOut() {
-	console.log("out");
-	cursor(ARROW);
-}
 
-function testClick() {
-	console.log("click");
-}
+// function testOut() {
+// 	console.log("out");
+// 	cursor(ARROW);
+// }
 
-function testDrag() {
-	console.log("drag");
-}
+// function testClick() {
+// 	console.log("click");
+// }
+
+// function testDrag() {
+// 	console.log("drag");
+// }
 
 // After setup is run, draw runs continuously at 60 fps
 function draw() {
@@ -147,8 +144,11 @@ function draw() {
 	// clear();
 	push();
 		imageMode(CORNER);
-		// image(imgCeiling, 0, 0, windowWidth, 0);
-		image(vidCeiling, 0, 0, windowWidth, windowHeight);
+		if(playing) {
+			image(vidCeiling, 0, 0, windowWidth, windowHeight);
+		} else {
+			image(imgCeiling, 0, 0, windowWidth, windowHeight);
+		}
 		ellipseMode(CENTER);
 		noStroke();
 		// fill(200);
@@ -170,42 +170,11 @@ function draw() {
 		}
 	pop();
 
-	// if (hoverOverFan == true) {
-	// 	cursor(HAND);
-	// } 
-	// else if (myLamp.hoverOver == true) {
-	//     cursor(HAND);
-	// } 
-	// else if (myPaperTowel.hoverOver == true) {
-	// 	cursor(HAND);
-	// } 
-	// else if (myMug.hoverOver == true) {
-	// 	cursor(HAND);
-	// } 
-	// else if (myPen.hoverOver == true) {
-	// 	cursor(HAND);
-	// } 
-	// else if (myPencil.hoverOver == true) {
-	// 	cursor(HAND);
-	// } 
-	// else if (myCrumbs.hoverOver == true) {
-	// 	cursor(HAND);
-	// } 
-	// else if (myBetOnYourself.hoverOver == true) {
-	// 	cursor(HAND);
-	// } 
-	// else if (myInspireEnvy.hoverOver == true) {
-	// 	cursor(HAND);
-	// }
-	// else {
-	// 	cursor(ARROW);
-	// }
-
   	// *************************************
   	// TEST
   	// *************************************
 	  
-	myTest.display();
+	// myTest.display();
 
   	// *************************************
   	// LAMP - enters right to left
@@ -300,6 +269,50 @@ function draw() {
 
 	myInspireEnvy.displayPush();
 
+
+	if (hoverOverFan == true) {
+	// cursor(HAND);
+		testOver();
+	} 
+	else if (myLamp.hoverOver == true) {
+	    // cursor(HAND);
+	    testOver();
+	} 
+	else if (myPaperTowel.hoverOver == true) {
+		cursor(HAND);
+	} 
+	else if (myMug.hoverOver == true) {
+		cursor(HAND);
+	} 
+	else if (myPen.hoverOver == true) {
+		cursor(HAND);
+	} 
+	else if (myPencil.hoverOver == true) {
+		cursor(HAND);
+	} 
+	else if (myCrumbs.hoverOver == true) {
+		cursor(HAND);
+	} 
+	else if (myBetOnYourself.hoverOver == true) {
+		cursor(HAND);
+	} 
+	else if (myInspireEnvy.hoverOver == true) {
+		cursor(HAND);
+	}
+	else {
+		cursor(ARROW);
+	}
+
+}
+
+function testOver() {
+	console.log("over");
+	cursor(HAND);
+	push();
+		noStroke();
+		fill('rgba(0,255,0, 0.25)');
+		ellipse(mouseX, mouseY, 10, 10);
+	pop();
 }
 
 function mouseDragged() {
@@ -333,6 +346,7 @@ function mousePressed() {
 		    vidCeiling.play();
 		    // vidCeiling.time((mouseX/width) * vidCeiling.duration());
 		    playing = true;
+		    console.log("click fan " + playing);
 		}
 		else {
 		    vidCeiling.pause();
@@ -467,6 +481,23 @@ function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
     	}  
   		     
   	}
+
+	this.clickOn = function() {
+
+		// when mouse pressed, calculate difference between mouse and center of image
+	  	this.dx = mouseX - this.x;
+		this.dy = mouseY - this.y;
+
+	}
+
+	this.drag = function() {
+
+		// when dragging, update position of image
+		this.x = mouseX - this.dx - this.zoneOffsetX;
+		this.y = mouseY - this.dy - this.zoneOffsetY;
+
+	}
+
   	
   	// GENERAL display method (unique objects have separate display methods)
   	this.display = function() {
@@ -644,19 +675,4 @@ function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
 		image(this.img, this.x, this.y);
 	}
 
-	this.clickOn = function() {
-
-		// when mouse pressed, calculate difference between mouse and center of image
-	  	this.dx = mouseX - this.x;
-		this.dy = mouseY - this.y;
-
-	}
-
-	this.drag = function() {
-
-		// when dragging, update position of image
-		this.x = mouseX - this.dx - this.zoneOffsetX;
-		this.y = mouseY - this.dy - this.zoneOffsetY;
-
-	}
 }
