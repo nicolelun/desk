@@ -7,8 +7,13 @@ var imgPencil;
 var imgCrumbs;
 var imgInspireEnvy;
 var imgBetOnYourself;
+var imgTin;
+var imgPlant;
+var imgGlass;
+var imgBox;
 
-var myCeiling;
+// var myCeiling;
+var myFan;
 var myLamp;
 var myMug;
 var myPaperTowel;
@@ -17,13 +22,10 @@ var myPencil;
 var myCrumbs;
 var myInspireEnvy;
 var myBetOnYourself;
-
-// TEST
-var testObject;
-var testObject2;
-var testObject3;
-var testPara;
-var myTest;
+var myTin;
+var myPlant;
+var myGlass;
+var myBox;
 
 // GENERAL
 var startTime;
@@ -37,30 +39,40 @@ var playing = false;
 var distanceFan;
 var hoverOverFan;
 
+var objects = [];
+
+var angle1 = 0;
+var angle2 = 0;
+var scalar = 70;
+
 
 function preload() {
-	imgCeiling = loadImage("images/desk/ceiling2.jpg");
-	imgLamp = loadImage("images/desk/IMG_2235_Lamp_368w.png");
-	imgMug = loadImage("images/desk/IMG_2244_Mug_306w_NL.png");
-	imgPaperTowel = loadImage("images/desk/IMG_2209_PaperTowel_378w.png");
-	imgPen = loadImage("images/desk/IMG_2249_Pen_46w.png");
-	imgPencil = loadImage("images/desk/IMG_2218_Pencil_30w.png");
-	imgCrumbs = loadImage("images/desk/IMG_2247_ButterfingerCrumbs_575w.png");
-	imgBetOnYourself = loadImage("images/desk/IMG_2222_BetOnYourself_122w.png");
-	imgInspireEnvy = loadImage("images/desk/IMG_2222_InspireEnvy_55w.png");
-}
-
-function windowResized() {
-	resizeCanvas(windowWidth, windowHeight);
+	imgCeiling = loadImage("images/ceiling2.jpg");
+	imgLamp = loadImage("images/IMG_2235_Lamp_369x264.png");
+	imgMug = loadImage("images/IMG_2244_Mug_306x259.png");
+	imgPaperTowel = loadImage("images/IMG_2209_PaperTowel_378x401.png");
+	imgPen = loadImage("images/IMG_2249_Pen_45x425.png");
+	imgPencil = loadImage("images/IMG_2218_Pencil_30x529.png");
+	imgCrumbs = loadImage("images/IMG_2247_ButterfingerCrumbs_575w.png");
+	imgBetOnYourself = loadImage("images/IMG_2222_BetOnYourself_49x159.png");
+	imgInspireEnvy = loadImage("images/IMG_2222_InspireEnvy_59x162.png");
+	imgTin = loadImage("images/IMG_2192_PaperClipTin_139x137.png");
+	imgBox = loadImage("images/IMG_2199_Box_449x295.png");
+	imgPlant = loadImage("images/IMG_2204_Plant_423x387.png");
+	imgGlass = loadImage("images/IMG_2221_Glass_262x212.png");
+	imgHand = loadImage("images/cursor-png-1115_32x32.png");
 }
 
 // Setup runs ONCE at the start of the sketch
 function setup() {
 	createCanvas(windowWidth, windowHeight);
+	noStroke();
 	imageMode(CENTER);
 	rectMode(CENTER);
 	ellipseMode(CENTER);
 	angleMode(DEGREES);
+	colorMode(RGB, 255);
+	noTint();
 
 	startTime = millis();
 
@@ -73,343 +85,348 @@ function setup() {
   	// button = createButton('play');
   	// button.mousePressed(toggleVid); // attach button listener
 
+  	myFan = new Fan();
+  	myWindow = new Window();
+
 	// object parameters: image, startX, startY, brakeX, brakeY, speed, rotate
-	myLamp = new DeskObject(imgLamp, width + 300, 110, width - 200, 110, 10, 0);
-	myMug = new DeskObject(imgMug, -300, height / 2, 50, height / 2, 10, 0);
-	myPaperTowel = new DeskObject(imgPaperTowel, width * .4, -300, width * .4, 100, 10, 0);
-	myPen = new DeskObject(imgPen, 0, height * .75, 200, height * .75, 10, -2); 
-	myPencil = new DeskObject(imgPencil, 1000, 200, 500, 200, 10, 0);
-	myCrumbs = new DeskObject(imgCrumbs, width / 2, height, width / 2, height *.75, 10, 0);
-	myBetOnYourself = new DeskObject(imgBetOnYourself, width, 300, width - 30, 300, 10, 0);
-	myInspireEnvy = new DeskObject(imgInspireEnvy, width, 300, width - 60, 300, 10, 0);
+	// var originX = width/2;
+	var originX = -100;
+	var originXRight = width + 100;
+	var originY = height/2;
 
-	// testObject = createImg("images/desk/IMG_2218_Pencil_30w.png");
-	// testObject.style('transform','translate(' + 50 + 'px) rotate(' + 25 + 'deg)');
-	// testObject.position(20, 20);
-	// testObject.mouseOver(testOver);
-	// testObject.mouseOut(testOut);
-	// testObject.mousePressed(testClick);
+	//LEFT SIDE
+	myPencil = new DeskObject(imgPencil, originX, height * 0.5, width * 0.09, 0, 0, 1);
+	myPen = new DeskObject(imgPen, originX, height * .75, width * 0.15, 0, 0, -2); 
+	myTin = new DeskObject(imgTin, originX, height * 0.8, width * 0.15, 0, 0, 0);
+	myMug = new DeskObject(imgMug, originX, height * 0.5, width * 0.30, 0, 0, 0);
+	myPaperTowel = new DeskObject(imgPaperTowel, originX, height * 0.7, width * .5, 0, 10, 0);
+	myCrumbs = new DeskObject(imgCrumbs, originX, height * 0.75, width * 0.5, 0, 0, 0);
+	myBox = new DeskObject(imgBox, originX, height * 0.1, width * 0.3, 0, 0, 0);
 
-	// testObject2 = createImg("images/desk/IMG_2244_Mug_306w_NL.png");
-	// testObject2.position(100, 100);
-	// testObject2.mouseOver(testOver);
-	// testObject2.mouseOut(testOut);
-	// testObject2.mousePressed(testClick);
+	// RIGHT SIDE
+	myLamp = new DeskObject(imgLamp, originX, 120, width * 0.6, 0, 0, 0);
+	myPlant = new DeskObject(imgPlant, originX, height * 0.45, width * 0.9, 0, 0, 0);
+	myGlass = new DeskObject(imgGlass, originX, height * 0.85, width * 0.8, 0, 0, 0);
+	myBetOnYourself = new DeskObject(imgBetOnYourself, originX, height * 0.15, width * 0.9, 0, 0, 0);
+	myInspireEnvy = new DeskObject(imgInspireEnvy, originX, height * 0.2, width * 0.85, 0, 0, 1);
 
-	// testPara = createP("This is a test.")
-	// testPara.mouseOver(testChangeBackground);
-	// testPara.mouseOut(testRevertBackground);
+	objects = [
+		{id: 'box', obj: myBox},
+		{id: 'mug', obj: myMug},
+		{id: 'paperTowel', obj: myPaperTowel},
+		{id: 'pen', obj: myPen},
+		{id: 'pencil', obj: myPencil},
+		{id: 'plant', obj: myPlant},
+		{id: 'glass', obj: myGlass},
+		{id: 'bet', obj: myBetOnYourself},
+		{id: 'inspire', obj: myInspireEnvy},
+		{id: 'tin', obj: myTin},
+	];
 
-	// testObject3 = select("#img-pencil");
-	// testObject3.mouseOver(testOver);
-	// testObject3.mouseOut(testOut);
-	// testObject3.mousePressed(testClick);
-	// // testObject3.drag(testDrag);
-	// myTest = new TestDeskObject(testObject3, testObject3.elt.x, testObject3.elt.y);
-	// console.log(testObject3.elt.x);
-	// console.log(testObject3.elt.y);
 }
 
-// function testChangeBackground() {
-// 	testPara.style('background-color', 'pink');
-// 	cursor(HAND);
-// }
-
-// function testRevertBackground() {
-// 	testPara.style('background-color', 'white');
-// 	cursor(ARROW);
-// }
-
-
-
-// function testOut() {
-// 	console.log("out");
-// 	cursor(ARROW);
-// }
-
-// function testClick() {
-// 	console.log("click");
-// }
-
-// function testDrag() {
-// 	console.log("drag");
-// }
+function windowResized() {
+	resizeCanvas(windowWidth, windowHeight);
+	myFan = new Fan();
+	myWindow = new Window();
+}
 
 // After setup is run, draw runs continuously at 60 fps
 function draw() {
 
-	currentTime = millis();
+	// currentTime = millis();
 
-	// clear background
+	// create background
 	// clear();
-	push();
-		imageMode(CORNER);
-		if(playing) {
-			image(vidCeiling, 0, 0, windowWidth, windowHeight);
-		} else {
-			image(imgCeiling, 0, 0, windowWidth, windowHeight);
-		}
-		ellipseMode(CENTER);
-		noStroke();
-		// fill(200);
-		noFill();
-		var fanX = windowWidth - 40;
-		var fanY = windowHeight - 200;
-		var fanWidth = 150;
-		var fanHeight = 150;
-		ellipse(fanX, fanY, fanWidth, fanHeight);
-    		
-		// get distance between mouse and circle
-		distanceFan = dist(mouseX, mouseY, fanX, fanY); 
-		  
-		// if the distance is less than the circle's radius
-		if (distanceFan < fanWidth/2) {
-		    hoverOverFan = true;
-		} else {
-		    hoverOverFan = false;
-		}
-	pop();
+	myFan.displayFan();
+	// myFan.toggleFan();
+
+	myWindow.displayWindow();
+	myWindow.hoverOver();
 
   	// *************************************
-  	// TEST
+  	// LAMP 
   	// *************************************
-	  
-	// myTest.display();
-
-  	// *************************************
-  	// LAMP - enters right to left
-  	// *************************************
-
-	if (myLamp.x < myLamp.brakeX) {
-	    myLamp.brake();
-	} 
 	  
 	myLamp.drive();
-	  
+	myLamp.createLampZone();
 	myLamp.displayLamp();
+	// myWindow.toggleWindow();
+    // myLamp.toggleLamp();
+    // toggleTint();
 
-
-	// *************************************
-  	// MUG - enters left to right
-  	// *************************************
-
-	if (myMug.x > myMug.brakeX) {
-	    myMug.brake();
-	} 
-	  
-	myMug.drive();
-	  
-	myMug.displayPush(); 
-
-	// *************************************
-  	// PAPER TOWEL - enters top to bottom
-  	// *************************************
-
-	if (myPaperTowel.y > myPaperTowel.brakeY) {
-	    myPaperTowel.brake();
-	} 
-	  
-	myPaperTowel.drive();
-	  
-	myPaperTowel.displayPush();
+    if (myLamp.lampOn == true) {
+		myLamp.toggleLamp();
+	}
+	else if (myWindow.windowOn == true) {
+		myWindow.toggleWindow();
+	} else {
+		noTint();
+		colorMode(RGB, 255);
+	}
 
 	// *************************************
-  	// PEN - enters left to right
+  	// ARRAY
   	// *************************************
 
-	if (myPen.x > myPen.brakeX) {
-	    myPen.brake();
-	} 
-	  
-	myPen.drive();
-	  
-	myPen.displayPush();
+  	for (var i = 0; i < objects.length; i++) {
+  		if (objects[i].obj.enter == true) {
+	  		objects[i].obj.drive();
+	  	} else {
+	  		objects[i].obj.drift();
+	  	}
+  		objects[i].obj.createZone();
+  		objects[i].obj.displayObject();
+  		// objects[i].obj.hoverDisplayHand();
+  		objects[i].obj.hoverResetDrift();
 
-	// *************************************
-  	// PENCIL - enters left to right
-  	// *************************************
+  	}
 
-	// if (myPencil.x > myPencil.brakeX) {
-	//     myPencil.brake();
-	// } 
-	  
-	// myPencil.drive();
-	  
-	// myPencil.displayPush();
+  	// if (myMug2.enter == true) {
+  	// 	myMug2.drive();
+  	// } else {
+  	// 	myMug2.drift();
+  	// }
+  	// myMug2.createZone();
+  	// myMug2.displayObject();
+  	// myMug2.hoverDisplayHand();
+  	// myMug2.hoverResetDrift();
 
 	// *************************************
   	// CRUMBS - enters bottom to top
   	// *************************************
 
-	if (myCrumbs.y < myCrumbs.brakeY) {
-	    myCrumbs.brake();
-	} 
-	  
-	myCrumbs.drive();
-	  
+	if (myCrumbs.enter == true) {
+		myCrumbs.drive();  
+	} else {
+		myCrumbs.drift();
+	}
+	myCrumbs.createCrumbZone();
 	myCrumbs.displayCrumbs();
+	myCrumbs.hoverResetDrift();
 
-	// *************************************
-  	// LOZENGES - enters right to left
+  	// *************************************
+  	// HOVER HAND for BACKGROUND
   	// *************************************
 
-	if (myBetOnYourself.x < myBetOnYourself.brakeX) {
-		myBetOnYourself.brake();
+	if (myLamp.hoverOver == true || myWindow.hoverOver() == true) {
+		mouseOver();
+	} else if (myFan.hoverOver() == true && myLamp.lampOn == false && myWindow.windowOn == false) {
+		mouseOver();
 	}
 
-	myBetOnYourself.drive();
+	// myWindow.toggleWindow();
 
-	myBetOnYourself.displayPush();
+	// start p5 stuff
 
-	if (myInspireEnvy.x < myInspireEnvy.brakeX) {
-		myInspireEnvy.brake();
-	}
+	// var ang1 = radians(angle1);
+	// var ang2 = radians(angle2);
 
-	myInspireEnvy.drive();
+	// var x1 = width/2 + (scalar * cos(ang1));
+	// var x2 = width/2 + (scalar * cos(ang2));
 
-	myInspireEnvy.displayPush();
+	// var y1 = height/2 + (scalar * sin(ang1));
+	// var y2 = height/2 + (scalar * sin(ang2));
 
+	// fill(255);
+	// rect(width*0.5, height*0.5, 140, 140);
 
-	if (hoverOverFan == true) {
-	// cursor(HAND);
-		testOver();
-	} 
-	else if (myLamp.hoverOver == true) {
-	    // cursor(HAND);
-	    testOver();
-	} 
-	else if (myPaperTowel.hoverOver == true) {
-		cursor(HAND);
-	} 
-	else if (myMug.hoverOver == true) {
-		cursor(HAND);
-	} 
-	else if (myPen.hoverOver == true) {
-		cursor(HAND);
-	} 
-	else if (myPencil.hoverOver == true) {
-		cursor(HAND);
-	} 
-	else if (myCrumbs.hoverOver == true) {
-		cursor(HAND);
-	} 
-	else if (myBetOnYourself.hoverOver == true) {
-		cursor(HAND);
-	} 
-	else if (myInspireEnvy.hoverOver == true) {
-		cursor(HAND);
-	}
-	else {
-		cursor(ARROW);
-	}
+	// fill(0, 102, 153);
+	// ellipse(x1, height * 0.5 - 120, scalar, scalar);
+	// ellipse(x2, height * 0.5 + 120, scalar, scalar);
+
+	// fill(255, 204, 0);
+	// ellipse(width * 0.5 - 120, y1, scalar, scalar);
+	// ellipse(x2, y2, scalar, scalar);
+
+	// angle1 += 20;
+	// angle2 += 30; 
+
+	// end p5 stuff
 
 }
 
-function testOver() {
-	console.log("over");
-	cursor(HAND);
-	push();
+function Fan() {
+
+	
+
+	// FAN VIDEO
+	this.fanOn = false;
+
+	this.displayFan = function() {
+
+		push();
+
+			imageMode(CORNER);
+
+			if (this.fanOn == true) {
+				image(vidCeiling, 0, 0, windowWidth, windowHeight);
+			    vidCeiling.play();
+			} else {
+				image(imgCeiling, 0, 0, windowWidth, windowHeight);
+			    vidCeiling.pause();
+			}
+
+		pop();
+		
+	}
+
+	// hover over fan head
+	this.hoverOver = function() {
+
+		// FAN HEAD
+		this.x = windowWidth - 30;
+		this.y = windowHeight - 190;
+		this.width = 145;
+		this.height = 145;
+
+		ellipse(this.x, this.y, this.width, this.height);
+		
+		// get distance between mouse and circle
+		this.distance = dist(mouseX, mouseY, this.x, this.y); 
+		  
+		// if the distance is less than the circle's radius
+		if (this.distance < this.width/2) {
+		    return(true);
+		} else {
+		    return(false);
+		}
+	}
+		
+}
+
+function Window() {
+
+	this.x = width * .1;
+	this.y = height/2;
+	this.width = 70;
+	this.height = 600;
+	this.windowOn = false;
+
+	this.displayWindow = function() {
+
 		noStroke();
-		fill('rgba(0,255,0, 0.25)');
-		ellipse(mouseX, mouseY, 10, 10);
-	pop();
+		// fill(100);
+		noFill();
+		rect(this.x, this.y, this.width, this.height);
+	}
+
+	this.hoverOver = function() {
+		this.zoneLeft = this.x - this.width/2;
+		this.zoneRight = this.x + this.width/2;
+		this.zoneTop = this.y - this.height/2;
+		this.zoneBottom = this.y + this.height/2;
+
+		// click zone
+		this.clickPadding = 0;
+		this.clickZoneLeft = this.zoneLeft - this.clickPadding;
+		this.clickZoneRight = this.zoneRight + this.clickPadding;
+		this.clickZoneTop = this.zoneTop + this.clickPadding;
+		this.clickZoneBottom = this.zoneBottom - this.clickPadding;
+
+
+		// if mouse inside click zone
+		if (mouseX >= this.clickZoneLeft && // inside left side
+			mouseX <= this.clickZoneRight &&  // inside right side
+		    mouseY >= this.clickZoneTop &&  // inside top
+		    mouseY <= this.clickZoneBottom) // inside bottom
+			{
+		    return(true);			    
+		} 
+		// if mouse outside click zone
+		else {
+		    return(false);
+		}
+	}
+
+	this.toggleWindow = function() {
+
+		// turn window light on/off
+	    if (this.windowOn == true) {
+			colorMode(HSB, 360, 100, 100, 1);
+			this.hue = map(mouseX, 0, width, 0, 70);
+			tint(this.hue, 50, 100, 50);
+		} else {
+			noTint();
+			colorMode(RGB, 255);
+		}
+
+	}
+
 }
 
-function mouseDragged() {
-	if (myBetOnYourself.hoverOver == true) {
-		myBetOnYourself.drag();
- 	}
- 	else if (myInspireEnvy.hoverOver == true) {
-		myInspireEnvy.drag();
- 	}
-	else if (myPen.hoverOver == true) {
-		myPen.drag();
- 	}
- 	else if (myPencil.hoverOver == true) {
-		myPencil.drag();
- 	}
-  	else if (myPaperTowel.hoverOver == true) {
-  		myPaperTowel.drag();		  	
- 	}
- 	else if (myMug.hoverOver == true) {
- 		myMug.drag();
- 	}
- 	else if (myCrumbs.hoverOver == true) {
-		myCrumbs.drag();
- 	}
- 	
+function mouseOver() {
+	image(imgHand, mouseX, mouseY);
+}
+
+function toggleTint() {
+	if (myLamp.lampOn == true) {
+		myLamp.toggleLamp();
+	}
+	else if (myWindow.windowOn == true) {
+		myWindow.toggleWindow();
+	} else {
+		noTint();
+		colorMode(RGB, 255);
+	}
 }
 
 function mousePressed() {
- 	if (hoverOverFan == true) {
-	 	if (!playing) {
-		    vidCeiling.play();
-		    // vidCeiling.time((mouseX/width) * vidCeiling.duration());
-		    playing = true;
-		    console.log("click fan " + playing);
-		}
-		else {
-		    vidCeiling.pause();
-		    playing = false;
-		}
+ 	
+ 	// turn fan on/off
+ 	if (myFan.hoverOver() == true) {
+ 		// turn fan on
+ 		// for performance, only turn fan on if lamp and winow are off
+ 		if (myFan.fanOn == false && myLamp.lampOn == false && myWindow.windowOn == false) {
+ 			myFan.fanOn = true
+ 		} 
+ 		// turn fan off
+ 		else if (myFan.fanOn == true) {
+ 			myFan.fanOn = false;
+ 		}
 	}
 
+	// turn lamp on/off
 	if (myLamp.hoverOver == true) {
+		// turn lamp on
 		if (myLamp.lampOn == false) {
    			myLamp.lampOn = true;
-    		// if (playing == true) {
-    		// 	vidCeiling.pause();
-    		// 	playing = false;
-    		// }
-		} else if (myLamp.lampOn == true) {
+   			myWindow.windowOn = false;
+			myFan.fanOn = false;
+		} 
+		// turn lamp off
+		else if (myLamp.lampOn == true) {
     		myLamp.lampOn = false;
 		}
+ 	} 
+ 	// turn window on/off
+ 	else if (myWindow.hoverOver() == true) {
+ 		// turn window on
+ 		if (myWindow.windowOn == false) {
+   			myWindow.windowOn = true;
+   			myLamp.lampOn = false;
+			myFan.fanOn = false;
+		} 
+		// turn window off
+		else if (myWindow.windowOn == true) {
+    		myWindow.windowOn = false;
+		}
  	}
-	else if (myBetOnYourself.hoverOver == true) {
-	 	myBetOnYourself.clickOn();
-	}
-	else if (myInspireEnvy.hoverOver == true) {
-		myInspireEnvy.clickOn();
-	}
-	else if (myPen.hoverOver == true) {
-		myPen.clickOn();
-	}
-	else if (myPencil.hoverOver == true) {
-		myPencil.clickOn();
-	}
-	else if (myPaperTowel.hoverOver == true) {
-		myPaperTowel.clickOn();
-	}
-	else if (myMug.hoverOver == true) {
-		myMug.clickOn();
-	}
-	else if (myCrumbs.hoverOver == true) {
-		myCrumbs.clickOn();
+
+ 	// calculate distance to allow drag of object
+ 	for (var i = 0; i < objects.length; i++) {
+		if (objects[i].obj.hoverOver == true) {
+			objects[i].obj.calcDistance();
+		}
 	}
 }
 
-// plays or pauses the video depending on current state
-function toggleVid() {
-  if (playing) {
-    vidCeiling.pause();
-    button.html('play');
-  } else {
-    vidCeiling.loop();
-    button.html('pause');
-  }
-  playing = !playing;
-}
-
-function TestDeskObject(img, x, y) {
-	this.img = img;
-	this.x = x;
-	this.y = y;
-
-	this.display = function() {
-	   	image(this.img, this.x, this.y);
-	   	console.log("test desk object");
+function mouseDragged() {
+	for (var i = 0; i < objects.length; i++) {
+		if (objects[i].obj.hoverOver == true) {
+			objects[i].obj.drag();
+		}
 	}
-
 }
 
 function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
@@ -418,159 +435,265 @@ function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
 	this.startY = startY;
 	this.brakeX = brakeX;
 	this.brakeY = brakeY;
-	this.speed = speed;
 	this.rotation = rotation;
 	this.x = startX;
 	this.y = startY;
+
+	// DRIVE (INITIAL ENTRY)
+	this.enter = true;
+	this.xrateChange;
+	this.xrateMultiplier = 3;
+	this.stopX = brakeX;
+	this.stopY = brakeY;
+	// this.speed = speed;
 	// this.totalDuration = duration;
 	// this.brakeDuration = 60;
 	// this.steadyDuration = 0;
-	this.xrateChange = 0.2;
-	this.yrateChange = 0.2;
+	// this.xrateChange = 0.5;
+	// this.yrateChange = 0.2;
+
+	// PUSH, CLICK, HOVER, DRAG
 	this.hoverOver = false;
-	this.distance;
 	this.dx;
 	this.dy;
-	this.angle1 = 0.0,
+	this.distance;
+	this.angle1 = 0,
 	this.pushZoneRadius = this.img.width/2;
 	this.zoneOffsetX = 0;
 	this.zoneOffsetY = 0;
 	
+	// DRIFT	
+	this.angleA = 0;
+	this.angleB = 0;
+	this.angleAStep = random(-20,20);
+	this.angleBStep = random(-15,15);
+	this.scalarA = random(50,70);
+	this.scalarB = random(50,200);
+	this.updateStopX = false;
+	this.scaleMax = 1;
+	this.scaleMin = random(0.85, 0.95);
+	this.scaleSize = this.scaleMax;
+	this.scaleStep = 0.0005;
+	this.scaleMultiplier = 0.7;
+
 	// LAMP VARIABLE
 	this.lampOn = false;
 
-	// drive method
+  	// DRIVE (INITIAL ENTRY)
   	this.drive = function() {
 
   		// HORIZONTAL MOVEMENT
-  		// if moving left to right
-  		if (this.brakeX > this.startX) { 
-    		this.x = this.x + this.speed;
-    	}
-    	// if moving right to left
-  		else if (this.brakeX < this.startX) {
-    		this.x = this.x - this.speed;
-  		}
+		// speed change is log of absolute value of difference between current x and brakeX
+		this.xrateChange = log(abs(this.x - this.brakeX)) * this.xrateMultiplier;
 
-  		// VERTICAL MOVEMENT
-  		// if moving top to bottom
-  		if (this.brakeY > this.startY) { 
-    		this.y = this.y + this.speed;
-    	}
-    	// if moving bottom to top
-  		else if (this.brakeY < this.startY) { 
-    		this.y = this.y - this.speed;
-  		}
-  	}
- 
-  	// brake method
-  	this.brake = function() {
+		// if moving in positive direction left to right
+		if (this.brakeX > this.startX && this.xrateChange > 0) {
+			this.x = this.x + this.xrateChange;
+		}
+		// if moving in negative direction from right to left
+		else if (this.brakeX < this.startX && this.xrateChange > 0) {
+			this.x = this.x - this.xrateChange;
+		}
+		// if ready to stop
+		else {
+			this.xrateChange = 0;
+			this.enter = false;
+			this.stopX = this.x;
+			this.stopY = this.y;
+		}
 
-  		// HORIZONTAL MOVEMENT
-		if (this.speed > 0) {
-   			this.speed = this.speed - this.xrateChange;
-    	} else {
-      		this.speed = 0;
-    	}  
-  
-  		// VERTICAL MOVEMENT
-		if (this.speed > 0) {
-   			this.speed = this.speed - this.yrateChange;
-    	} else {
-      		this.speed = 0;
-    	}  
-  		     
+		// if (this.brakeX > this.startX) {
+		// 	if (this.x >= this.brakeX && this.speed > 0) {
+		// 		this.speed = this.speed - this.xrateChange;
+		// 	} else if (this.speed < 0) {
+		// 		this.speed = 0;
+		// 	}
+		// } 
+		// else if (this.brakeX < this.startX) {
+		// 	if (this.x <= this.brakeX && this.speed < 0) {
+		// 		this.speed = this.speed + this.xrateChange;
+		// 	} else if (this.speed > 0) {
+		// 		this.speed = 0;
+		// 	}
+		// } 
+
   	}
 
-	this.clickOn = function() {
+  	// CONTINUOUS DRIFT
+  	this.drift = function() {
 
-		// when mouse pressed, calculate difference between mouse and center of image
+  		// allow drift if mouse not hovering over object
+  		if (this.hoverOver == false) {
+
+  			// set angle to radians
+  			this.ang1 = radians(this.angleA);
+			this.ang2 = radians(this.angleB);
+
+			this.x = (this.stopX - this.scalarA) + (this.scalarA * cos(this.ang1));
+			this.y = this.stopY + (this.scalarB * sin(this.ang2));
+
+			this.angleA += this.angleAStep;
+			this.angleB += this.angleBStep;
+  		}
+  	}
+
+	this.hoverDisplayHand = function() {
+		if (this.hoverOver == true) {
+			image(imgHand, mouseX, mouseY);
+		} 
+	}
+
+	this.hoverResetDrift = function() {
+		if (this.hoverOver == true) {
+			this.updateStopX = true;
+		} 
+		if (this.hoverOver == false && this.updateStopX == true) {
+			// capture current location of object 
+			this.stopX = this.x;
+			this.stopY = this.y;
+
+			// reset angles for drift calculation
+			this.angleA = 0;
+			this.angleB = 0;
+
+			// reset flag
+			this.updateStopX = false;
+		}
+	}
+
+	this.intersects = function(other) {
+		var d = (this.x, this.y, other.x, other.y);
+		if (d < this.r + other.r) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	this.calcDistance = function() {
+		// capture difference between mouse and center of object
 	  	this.dx = mouseX - this.x;
 		this.dy = mouseY - this.y;
-
 	}
 
 	this.drag = function() {
-
-		// when dragging, update position of image
+		// update position of object
 		this.x = mouseX - this.dx - this.zoneOffsetX;
 		this.y = mouseY - this.dy - this.zoneOffsetY;
-
 	}
 
-  	
-  	// GENERAL display method (unique objects have separate display methods)
-  	this.display = function() {
-  		
-  		push();
+	this.createZone = function() {
+		
+		// if elongated object, create rectangular zone
+		if (this.img.height/this.img.width >= 2 || this.img.width/this.img.height >= 2) {
 
-  			// this.rotation = 0;
-  			rotate(this.rotation);
-	   		image(this.img, this.x, this.y);
+			this.zoneLeft = this.x - this.img.width/2;
+			this.zoneRight = this.x + this.img.width/2;
+			this.zoneTop = this.y - this.img.height/2;
+			this.zoneBottom = this.y + this.img.height/2;
 
-	   		// if image is long/narrow, then use rectangle as click zone
-	   		// otherwise use circle as click zone
-	   		if (this.img.height/this.img.width >= 2 || this.img.width/this.img.height >= 2) {
-			    
-			    fill(200);
-				ellipse(this.x - this.img.width/2, this.y - this.img.height/2, 10, 10); // upper left
-				ellipse(this.x + this.img.width/2, this.y - this.img.height/2, 10, 10); // upper right
-				ellipse(this.x - this.img.width/2, this.y + this.img.height/2, 10, 10); // bottom left
-				ellipse(this.x + this.img.width/2, this.y + this.img.height/2, 10, 10); // bottom right
+			// click zone
+			this.clickPadding = 0;
+			this.clickZoneLeft = this.zoneLeft - this.clickPadding;
+			this.clickZoneRight = this.zoneRight + this.clickPadding;
+			this.clickZoneTop = this.zoneTop + this.clickPadding;
+			this.clickZoneBottom = this.zoneBottom - this.clickPadding;
 
-				if (mouseX >= this.x - this.img.width/2 // left edge
-			    	&& mouseX <= this.x + this.img.width/2 // right edge
-					&& mouseY >= this.y - this.img.height/2 // top edge 
-					&& mouseY <= this.y + this.img.height/2 // bottom edge
-					) 
+			// push zone
+			this.pushPadding = -10;
+			this.pushZoneLeft = this.zoneLeft - this.pushPadding;
+			this.pushZoneRight = this.zoneRight + this.pushPadding;
+			this.pushZoneTop = this.zoneTop - this.pushPadding;
+			this.pushZoneBottom = this.zoneBottom + this.pushPadding;
+
+			// if mouse inside click zone
+			if (mouseX >= this.clickZoneLeft && // inside left side
+				mouseX <= this.clickZoneRight &&  // inside right side
+			    mouseY >= this.clickZoneTop &&  // inside top
+			    mouseY <= this.clickZoneBottom) // inside bottom
 				{
-					this.hoverOver = true;
 
-				} else {
-					this.hoverOver = false;
+			    this.hoverOver = true;			    
+
+			    // if mouse inside push zone
+				// if mouse on left side
+			 	if (mouseX < this.pushZoneLeft) {
+					this.x = mouseX + (this.img.width/2);
+				} 
+			    // if mouse on right side
+				else if (mouseX > this.pushZoneRight) {
+					this.x = mouseX - (this.img.width/2);
+				} 
+				// if mouse on top side
+				else if (mouseY > this.pushZoneTop) {
+					this.y = mouseY - (this.img.height/2);
+				} 
+				// if mouse on bottom side
+				else if (mouseY < this.pushZoneBottom) {
+					this.y = mouseY + (this.img.height/2);
 				}
 
-	   		} else {
-				// get distance between mouse and image
-				this.distance = dist(mouseX, mouseY, this.x, this.y); 
-				  
-				// if the distance is less than the image
-				if (this.distance < this.img.width/2) {
-				    this.hoverOver = true;
-				} else {
-				    this.hoverOver = false;
-				}
-	   		}
+			} 
+			// if mouse outside click zone
+			else {
+			    this.hoverOver = false;
+			}
 
-	    pop();
+		}	
 
+		// if equal-sided object, create circular zone
+		else {
+
+			this.angle1 = 0;
+			this.clickZonePadding = 0;
+			// this.pushZonePadding = 0 - (this.img.width * .15);
+			this.pushZonePadding = -20;
+
+			// assign size of click zone
+			this.clickZoneRadius = this.img.width/2 + this.clickZonePadding;
+			// assign size of push zone
+			this.pushZoneRadius = this.img.width/2 + this.pushZonePadding;
+			
+	  		// calculate angle between mouse and center of image
+		  	this.dx = mouseX - this.x;
+		  	this.dy = mouseY - this.y;
+		  	this.angle1 = atan2(this.dy, this.dx);
+
+		  	// calculate distance between mouse and center of image
+			this.distance = dist(mouseX, mouseY, this.x, this.y);
+
+			// if mouse inside click zone, then allow click and drag
+			if (this.distance < this.clickZoneRadius) {
+				
+				this.hoverOver = true;
+
+				// if mouse inside push zone, then push image
+			  	if (this.distance < this.pushZoneRadius) {
+			  		this.x = mouseX - (cos(this.angle1) * this.pushZoneRadius);
+			  		this.y = mouseY - (sin(this.angle1) * this.pushZoneRadius);
+			  	}
+			} 
+			// if mouse outside click zone
+			else {
+				this.hoverOver = false;
+			}
+		}
 	}
 
-	// LAMP display method
-	this.displayLamp = function() {
+  	this.displayObject = function() {
+		push();
+	  		rotate(this.rotation);
+			scale(this.scaleSize);
+	  		image(this.img, this.x, this.y);
+	  	pop();
+	}
 
-   		image(this.img, this.x, this.y);
-
-   		// LAMP HEAD VARIABLES
+	this.createLampZone = function() {
+		// create lamp head
 	    this.headX = this.x - this.img.width * 0.38;
 		this.headY = this.y + this.img.height * 0.35;
-		this.radiusMultiplier = 1;
 		this.widthHead = 80;
 		this.heightHead = 80;
-
-	    // turn on lamp
-	    if (this.lampOn == true) {
-			noStroke();
-			fill(255, 255, 255, 2);
-			for (var radiusGlow = 20; radiusGlow <= 650; radiusGlow += 8) {
-				this.radiusMultiplier = this.radiusMultiplier + 0.0001;
-				r = radiusGlow * this.radiusMultiplier;
-				ellipse(mouseX, mouseY, r, r);
-			}
-			tint(0, 153, 204, 126);
-		} else {
-			noTint();
-		}
     		
 		// get distance between mouse and circle
 		this.distance = dist(mouseX, mouseY, this.headX, this.headY); 
@@ -581,57 +704,50 @@ function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
 		} else {
 		    this.hoverOver = false;
 		}
-
-	    // draw a circle
-	 	// 	push();
-		// 	stroke(100);
-		// 	strokeWeight(10);
-		// 	if (this.hoverOver == true) {
-		// 	    fill(100);
-		// 	} else {
-		// 	    fill(200); 
-		// 	}
-		// 	ellipse(this.headX, this.headY, this.widthHead, this.heightHead);
-		// pop();
 	}
 
-	// PUSH display method
-  	this.displayPush = function() {
+	this.toggleLamp = function() {
+		this.radiusMultiplier = 1;
 
-		this.angle1 = 0.0,
+		// turn lamp light on/off
+	    if (this.lampOn == true) {
+			
+			colorMode(RGB, 255);
+			
+			// create light
+			noStroke();
+			push();
+				fill(255, 255, 255, 2);
+				for (var radiusGlow = 20; radiusGlow <= 650; radiusGlow += 8) {
+					this.radiusMultiplier = this.radiusMultiplier + 0.0001;
+					r = radiusGlow * this.radiusMultiplier;
+					ellipse(mouseX, mouseY, r, r);
+				}
+			pop();
+			// tint scene
+			tint(0, 153, 204, 126);
 
-		// assign size of push zone
-		this.pushZoneRadius = this.img.width/2;
-		// assign size of click zone
-		this.clickZoneRadius = this.pushZoneRadius + 10;
-
-  		// calculate angle between mouse and center of image
-	  	this.dx = mouseX - this.x;
-	  	this.dy = mouseY - this.y;
-	  	this.angle1 = atan2(this.dy, this.dx);
-
-	  	// calculate distance between mouse and center of image
-		this.distance = dist(mouseX, mouseY, this.x, this.y);
-
-		// if mouse inside push zone, then push image
-	  	if (this.distance < this.pushZoneRadius) {
-	  		this.x = mouseX - (cos(this.angle1) * this.pushZoneRadius);
-	  		this.y = mouseY - (sin(this.angle1) * this.pushZoneRadius);
-	  	}
-
-		// if mouse inside click zone, then allow click and drag
-		if (this.distance < this.clickZoneRadius) {
-			this.hoverOver = true;
 		} else {
-			this.hoverOver = false;
+			noTint();
 		}
+	}
 
-	  	image(this.img, this.x, this.y);
+	// display lamp
+	this.displayLamp = function() {
+
+   		image(this.img, this.x, this.y);
+
+		// if (this.hoverOver == true) {
+	 //  		push();
+	 //  			noStroke();
+		// 		fill('rgba(255,20,147,0.25)');
+		// 	  	ellipse(this.headX, this.headY, this.widthHead, this.heightHead);
+		// 	pop();
+		// } 
 
 	}
 
-	// CRUMBS display method
-	this.displayCrumbs = function() {
+	this.createCrumbZone = function() {
 		
 		this.angle1 = 0.0,
 
@@ -657,8 +773,8 @@ function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
 
 		// if mouse inside push zone, then push
 	  	if (this.distance < this.pushZoneRadius) {
-	  		this.x = (mouseX - this.zoneOffsetX) - (cos(this.angle1) * this.pushZoneRadius) ;
-	  		this.y = (mouseY - this.zoneOffsetY) - (sin(this.angle1) * this.pushZoneRadius) ;
+	  		this.x = (mouseX - this.zoneOffsetX) - (cos(this.angle1) * this.pushZoneRadius);
+	  		this.y = (mouseY - this.zoneOffsetY) - (sin(this.angle1) * this.pushZoneRadius);
 	  	}
 
 	  	// if mouse inside click zone, then allow click and drag
@@ -667,12 +783,16 @@ function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
 		} else {
 			this.hoverOver = false;
 		}
+	}
 
+	this.displayCrumbs = function() {
+		
 		// fill(200);
 		// ellipse(this.pushZoneX, this.pushZoneY, this.pushZoneRadius * 2);
 		// fill(100);
 		// ellipse(this.x, this.y, this.pushZoneRadius * 2);
 		image(this.img, this.x, this.y);
+
 	}
 
 }
