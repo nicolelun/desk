@@ -275,11 +275,12 @@ function Fan() {
 	this.hoverOver = function() {
 
 		// FAN HEAD
-		this.x = windowWidth - 30;
-		this.y = windowHeight - 190;
+		this.x = windowWidth * 0.97;
+		this.y = windowHeight * 0.75;
 		this.width = 145;
 		this.height = 145;
 
+		// fill(200);
 		ellipse(this.x, this.y, this.width, this.height);
 		
 		// get distance between mouse and circle
