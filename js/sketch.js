@@ -45,6 +45,7 @@ var angle1 = 0;
 var angle2 = 0;
 var scalar = 70;
 
+p5.disableFriendlyErrors = true;
 
 function preload() {
 	imgCeiling = loadImage("images/ceiling2.jpg");
@@ -60,7 +61,8 @@ function preload() {
 	imgBox = loadImage("images/IMG_2199_Box_449x295.png");
 	imgPlant = loadImage("images/IMG_2204_Plant_423x387.png");
 	imgGlass = loadImage("images/IMG_2221_Glass_262x212.png");
-	imgHand = loadImage("images/cursor-png-1115_32x32.png");
+	// imgHand = loadImage("images/cursor-png-1115_32x32.png");
+	imgHand = loadImage("images/interactive_icon.svg");
 }
 
 // Setup runs ONCE at the start of the sketch
@@ -134,26 +136,17 @@ function windowResized() {
 // After setup is run, draw runs continuously at 60 fps
 function draw() {
 
-	// currentTime = millis();
-
-	// create background
-	// clear();
+  	// *************************************
+  	// LAMP, WINDOW, FAN
+  	// *************************************
+	
 	myFan.displayFan();
-	// myFan.toggleFan();
 
-	myWindow.displayWindow();
-	myWindow.hoverOver();
+	// myWindow.hoverOver();
 
-  	// *************************************
-  	// LAMP 
-  	// *************************************
-	  
 	myLamp.drive();
 	myLamp.createLampZone();
 	myLamp.displayLamp();
-	// myWindow.toggleWindow();
-    // myLamp.toggleLamp();
-    // toggleTint();
 
     if (myLamp.lampOn == true) {
 		myLamp.toggleLamp();
@@ -166,13 +159,35 @@ function draw() {
 	}
 
 	// *************************************
-  	// ARRAY
+  	// HOVER HAND for BACKGROUND
+  	// *************************************
+
+	if (myLamp.hoverOver == true) {
+		if (myLamp.lampOn == false) {
+			myLamp.highlightLamp();
+		}
+		mouseOver();
+	} else if (myWindow.hoverOver() == true) {
+		if (myWindow.windowOn == false) {
+			myWindow.highlightWindow();
+		}
+		mouseOver();
+	} else if (myFan.hoverOver() == true && myLamp.lampOn == false && myWindow.windowOn == false) {
+		if (myFan.fanOn == false) {
+			myFan.highlightFan();
+		}
+		mouseOver();
+	}
+
+	// *************************************
+  	// OBJECT ARRAY
   	// *************************************
 
   	for (var i = 0; i < objects.length; i++) {
   		if (objects[i].obj.enter == true) {
 	  		objects[i].obj.drive();
 	  	} else {
+	  	// } else if (myLamp.lampOn == false && myWindow.windowOn == false && myFan.fanOn == false) {
 	  		objects[i].obj.drift();
 	  	}
   		objects[i].obj.createZone();
@@ -181,16 +196,6 @@ function draw() {
   		objects[i].obj.hoverResetDrift();
 
   	}
-
-  	// if (myMug2.enter == true) {
-  	// 	myMug2.drive();
-  	// } else {
-  	// 	myMug2.drift();
-  	// }
-  	// myMug2.createZone();
-  	// myMug2.displayObject();
-  	// myMug2.hoverDisplayHand();
-  	// myMug2.hoverResetDrift();
 
 	// *************************************
   	// CRUMBS - enters bottom to top
@@ -205,50 +210,16 @@ function draw() {
 	myCrumbs.displayCrumbs();
 	myCrumbs.hoverResetDrift();
 
-  	// *************************************
-  	// HOVER HAND for BACKGROUND
-  	// *************************************
-
-	if (myLamp.hoverOver == true || myWindow.hoverOver() == true) {
-		mouseOver();
-	} else if (myFan.hoverOver() == true && myLamp.lampOn == false && myWindow.windowOn == false) {
-		mouseOver();
-	}
-
-	// myWindow.toggleWindow();
-
-	// start p5 stuff
-
-	// var ang1 = radians(angle1);
-	// var ang2 = radians(angle2);
-
-	// var x1 = width/2 + (scalar * cos(ang1));
-	// var x2 = width/2 + (scalar * cos(ang2));
-
-	// var y1 = height/2 + (scalar * sin(ang1));
-	// var y2 = height/2 + (scalar * sin(ang2));
-
-	// fill(255);
-	// rect(width*0.5, height*0.5, 140, 140);
-
-	// fill(0, 102, 153);
-	// ellipse(x1, height * 0.5 - 120, scalar, scalar);
-	// ellipse(x2, height * 0.5 + 120, scalar, scalar);
-
-	// fill(255, 204, 0);
-	// ellipse(width * 0.5 - 120, y1, scalar, scalar);
-	// ellipse(x2, y2, scalar, scalar);
-
-	// angle1 += 20;
-	// angle2 += 30; 
-
-	// end p5 stuff
 
 }
 
 function Fan() {
 
-	
+	// FAN HEAD
+	this.x = windowWidth * 0.98;
+	this.y = windowHeight * 0.76;
+	this.width = 145;
+	this.height = 145;
 
 	// FAN VIDEO
 	this.fanOn = false;
@@ -266,7 +237,7 @@ function Fan() {
 				image(imgCeiling, 0, 0, windowWidth, windowHeight);
 			    vidCeiling.pause();
 			}
-
+			
 		pop();
 		
 	}
@@ -274,15 +245,6 @@ function Fan() {
 	// hover over fan head
 	this.hoverOver = function() {
 
-		// FAN HEAD
-		this.x = windowWidth * 0.97;
-		this.y = windowHeight * 0.75;
-		this.width = 145;
-		this.height = 145;
-
-		// fill(200);
-		ellipse(this.x, this.y, this.width, this.height);
-		
 		// get distance between mouse and circle
 		this.distance = dist(mouseX, mouseY, this.x, this.y); 
 		  
@@ -293,24 +255,24 @@ function Fan() {
 		    return(false);
 		}
 	}
-		
+
+	this.highlightFan = function() {
+		push();
+			noStroke();
+			fill('rgba(255,20,147,0.1)');
+			ellipse(this.x, this.y, this.width, this.height);
+		pop();
+	}
 }
 
 function Window() {
 
-	this.x = width * .1;
+	this.x = width * .05;
+	// this.x = width * .2;
 	this.y = height/2;
-	this.width = 70;
-	this.height = 600;
+	this.width = 200;
+	this.height = height * .9;
 	this.windowOn = false;
-
-	this.displayWindow = function() {
-
-		noStroke();
-		// fill(100);
-		noFill();
-		rect(this.x, this.y, this.width, this.height);
-	}
 
 	this.hoverOver = function() {
 		this.zoneLeft = this.x - this.width/2;
@@ -324,7 +286,6 @@ function Window() {
 		this.clickZoneRight = this.zoneRight + this.clickPadding;
 		this.clickZoneTop = this.zoneTop + this.clickPadding;
 		this.clickZoneBottom = this.zoneBottom - this.clickPadding;
-
 
 		// if mouse inside click zone
 		if (mouseX >= this.clickZoneLeft && // inside left side
@@ -340,6 +301,24 @@ function Window() {
 		}
 	}
 
+	this.highlightWindow = function() {
+		var x1 = 0;
+		var y1 = 0;
+		var x2 = width * .13;
+		var y2 = height * .18;
+		var x3 = x2;
+		var y3 = height;
+		var x4 = x1;
+		var y4 = height;
+
+		push();
+			noStroke();
+			fill('rgba(255,20,147,0.1)');
+			// rect(this.x, this.y, this.width, this.height);
+			quad(x1,y1,x2,y2,x3,y3,x4,y4);
+		pop();
+	}
+
 	this.toggleWindow = function() {
 
 		// turn window light on/off
@@ -348,16 +327,14 @@ function Window() {
 			this.hue = map(mouseX, 0, width, 0, 70);
 			tint(this.hue, 50, 100, 50);
 		} else {
-			noTint();
 			colorMode(RGB, 255);
+			noTint();
 		}
-
 	}
-
 }
 
 function mouseOver() {
-	image(imgHand, mouseX, mouseY);
+	image(imgHand, mouseX, mouseY, 30, 44.96377);
 }
 
 function toggleTint() {
@@ -376,8 +353,7 @@ function mousePressed() {
  	
  	// turn fan on/off
  	if (myFan.hoverOver() == true) {
- 		// turn fan on
- 		// for performance, only turn fan on if lamp and winow are off
+ 		// turn fan on, if lamp and window are off
  		if (myFan.fanOn == false && myLamp.lampOn == false && myWindow.windowOn == false) {
  			myFan.fanOn = true
  		} 
@@ -446,12 +422,6 @@ function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
 	this.xrateMultiplier = 3;
 	this.stopX = brakeX;
 	this.stopY = brakeY;
-	// this.speed = speed;
-	// this.totalDuration = duration;
-	// this.brakeDuration = 60;
-	// this.steadyDuration = 0;
-	// this.xrateChange = 0.5;
-	// this.yrateChange = 0.2;
 
 	// PUSH, CLICK, HOVER, DRAG
 	this.hoverOver = false;
@@ -476,6 +446,8 @@ function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
 	this.scaleSize = this.scaleMax;
 	this.scaleStep = 0.0005;
 	this.scaleMultiplier = 0.7;
+	this.pauseX;
+	this.pauseY;
 
 	// LAMP VARIABLE
 	this.lampOn = false;
@@ -626,13 +598,13 @@ function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
 					this.x = mouseX - (this.img.width/2);
 				} 
 				// if mouse on top side
-				else if (mouseY > this.pushZoneTop) {
-					this.y = mouseY - (this.img.height/2);
-				} 
+				// else if (mouseY > this.pushZoneTop) {
+				// 	this.y = mouseY - (this.img.height/2);
+				// } 
 				// if mouse on bottom side
-				else if (mouseY < this.pushZoneBottom) {
-					this.y = mouseY + (this.img.height/2);
-				}
+				// else if (mouseY < this.pushZoneBottom) {
+				// 	this.y = mouseY + (this.img.height/2);
+				// }
 
 			} 
 			// if mouse outside click zone
@@ -712,7 +684,7 @@ function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
 
 		// turn lamp light on/off
 	    if (this.lampOn == true) {
-			
+					
 			colorMode(RGB, 255);
 			
 			// create light
@@ -735,17 +707,15 @@ function DeskObject(img, startX, startY, brakeX, brakeY, speed, rotation) {
 
 	// display lamp
 	this.displayLamp = function() {
-
    		image(this.img, this.x, this.y);
+	}
 
-		// if (this.hoverOver == true) {
-	 //  		push();
-	 //  			noStroke();
-		// 		fill('rgba(255,20,147,0.25)');
-		// 	  	ellipse(this.headX, this.headY, this.widthHead, this.heightHead);
-		// 	pop();
-		// } 
-
+	this.highlightLamp = function() {
+		push();
+  			noStroke();
+			fill('rgba(255,20,147,0.1)');
+		  	ellipse(this.headX, this.headY, this.widthHead, this.heightHead);
+		pop();
 	}
 
 	this.createCrumbZone = function() {
