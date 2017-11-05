@@ -61,8 +61,7 @@ function preload() {
 	imgBox = loadImage("images/IMG_2199_Box_449x295.png");
 	imgPlant = loadImage("images/IMG_2204_Plant_423x387.png");
 	imgGlass = loadImage("images/IMG_2221_Glass_262x212.png");
-	// imgHand = loadImage("images/cursor-png-1115_32x32.png");
-	imgHand = loadImage("images/interactive_icon.svg");
+	imgHand = loadImage("images/hand_icon.svg");
 }
 
 // Setup runs ONCE at the start of the sketch
